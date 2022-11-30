@@ -13,11 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.mohamed.peaceandroidtask.entities.UiPost
-import com.mohamed.peaceandroidtask.entities.uiPosts
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.mohamed.peaceandroidtask.R
+import com.mohamed.peaceandroidtask.entities.posts.UiPost
+import com.mohamed.peaceandroidtask.entities.posts.uiPosts
+import com.mohamed.peaceandroidtask.utils.FirebaseResources
 
 @Composable
 fun PostListView(uiPosts: List<UiPost>, modifier: Modifier) {
@@ -28,6 +33,7 @@ fun PostListView(uiPosts: List<UiPost>, modifier: Modifier) {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PhotoPostCard(uiPost: UiPost, modifier: Modifier = Modifier) {
     Card(
@@ -47,14 +53,14 @@ fun PhotoPostCard(uiPost: UiPost, modifier: Modifier = Modifier) {
         ) {
             val imageModifier = Modifier
                 .fillMaxWidth()
-                .height(280.dp)
-                .clip(shape = RoundedCornerShape(percent = 6))
+                .clip(shape = RoundedCornerShape(percent = 3))
             Row(
                 modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = uiPost.owner.picture,
+                    model = "",
+                    error = painterResource(id = R.drawable.ic_launcher_background),
                     contentDescription = "",
                     modifier = Modifier
                         .width(50.dp)
@@ -65,7 +71,7 @@ fun PhotoPostCard(uiPost: UiPost, modifier: Modifier = Modifier) {
 
                 Column(modifier = Modifier.padding(start = 10.dp, top = 10.dp)) {
                     Text(
-                        text = uiPost.owner.lastName + " " + uiPost.owner.firstName,
+                        text = uiPost.author.name,
                         style = MaterialTheme.typography.body1
                     )
                     Text(
@@ -75,30 +81,21 @@ fun PhotoPostCard(uiPost: UiPost, modifier: Modifier = Modifier) {
                 }
 
             }
-
-            AsyncImage(
-                model = uiPost.image,
+            GlideImage(
+                model = FirebaseResources.getMedia(uiPost.image),
                 contentDescription = null,
                 modifier = imageModifier
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = uiPost.title,
+                text = "Post",
                 style = MaterialTheme.typography.body1
             )
             Text(
-                text = uiPost.text,
+                text = uiPost.title,
                 style = MaterialTheme.typography.body2
             )
             Row(modifier = Modifier.padding(top = 12.dp)) {
-                Text(
-                    text = "${uiPost.likes} Likes",
-                    style = MaterialTheme.typography.caption,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 4.dp)
-                        .wrapContentWidth(Alignment.Start)
-                )
                 Text(
                     text = "${uiPost.comments} Comments",
                     style = MaterialTheme.typography.caption,

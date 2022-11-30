@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "564374700432",
+    "project_id": "peachapp-eaa51",
+    "storage_bucket": "peachapp-eaa51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564374700432:android:5234bafe25e8770e73f315",
+        "android_client_info": {
+          "package_name": "com.mohamed.peaceandroidtask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564374700432-ik5mh487vbguvliem2unr99ttqn5hes0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2OdIEe6VNpc1v8bCzf8L_w8Ofbz7TvqE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564374700432-ik5mh487vbguvliem2unr99ttqn5hes0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

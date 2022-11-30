@@ -2,6 +2,7 @@ package com.mohamed.peaceandroidtask.di
 
 import com.mohamed.peaceandroidtask.BuildConfig
 import com.mohamed.peaceandroidtask.data.ApiService
+import com.mohamed.peaceandroidtask.data.Repository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,7 +61,13 @@ class RemoteModule {
         return retrofit.create(ApiService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideRepository(apiService: ApiService): Repository {
+        return Repository(apiService)
+    }
+
     companion object {
-        private const val BASE_URL = "https://firestore.googleapis.com/v1/projects/peach-assessment/databases/(default)/documents/users"
+        private const val BASE_URL = "https://firestore.googleapis.com/v1/projects/peach-assessment/databases/(default)/documents/"
     }
 }
