@@ -7,7 +7,8 @@ data class UiPost(
     val date: String,
     val title: String,
     val comments: Int,
-    val author: Author
+    val author: Author,
+    val commentsList: List<String>,
 )
 
 data class Author(
@@ -37,6 +38,7 @@ val uiPosts = listOf(
         "Ullam et saepe reiciendis voluptatem adipisci sit amet autem assumenda provident rerum culpa quis hic commodi nesciunt rem tenetur doloremque ipsam iure quis sunt voluptatem rerum illo velit",
         10,
         author1,
+        listOf()
     ),
     UiPost(
         "2",
@@ -46,6 +48,7 @@ val uiPosts = listOf(
         "Lacus laoreet",
         "Et licet quocumque oculos flexeris feminas adfatim multas spectare cirratas, quibus, si nupsissent, per aetatem ter iam nixus poterat suppetere liberorum, ad usque taedium pedibus pavimenta tergentes iactari volucriter gyris, dum exprimunt innumera simulacra, quae finxere fabulae theatrales.",
         22,
-        author2
+        author2,
+        listOf()
     )
 )

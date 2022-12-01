@@ -18,7 +18,8 @@ fun PostsResponse.toUIModel(usersResponse: UsersResponse): List<UiPost> {
             post.fields.createdAt.timestampValue,
             post.fields.caption.stringValue,
             post.fields.comments.arrayValue.values.size,
-            Author(name = author?.fields?.username?.stringValue!!, email = author.fields.email.stringValue)
+            Author(name = author?.fields?.username?.stringValue!!, email = author.fields.email.stringValue),
+            post.fields.comments.arrayValue.values.map { it.stringValue }
         )
     }
 }
