@@ -13,10 +13,10 @@ fun PostsResponse.toUIModel(usersResponse: UsersResponse): List<UiPost> {
         val author = usersResponse.users.find { it.name.contains(post.fields.authorID.stringValue) }
         UiPost(
             post.name,
-            if(post.fields.mediaType.stringValue == "photo") post.fields.storageRef.stringValue else "",
+            post.fields.mediaType.stringValue,
+            post.fields.storageRef.stringValue,
             post.fields.createdAt.timestampValue,
             post.fields.caption.stringValue,
-            "",
             post.fields.comments.arrayValue.values.size,
             Author(name = author?.fields?.username?.stringValue!!, email = author.fields.email.stringValue)
         )

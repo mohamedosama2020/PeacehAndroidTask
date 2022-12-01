@@ -2,10 +2,10 @@ package com.mohamed.peaceandroidtask.entities.posts
 
 data class UiPost(
     val id: String,
-    val image: String,
+    val mediaType:String,
+    val media: String,
     val date: String,
     val title: String,
-    val text: String,
     val comments: Int,
     val author: Author
 )
@@ -40,6 +40,7 @@ val uiPosts = listOf(
     ),
     UiPost(
         "2",
+
         "https://images.unsplash.com/photo-1473116519190-356a1463fbcf",
         "1974-03-12",
         "Lacus laoreet",

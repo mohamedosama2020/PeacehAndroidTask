@@ -28,28 +28,28 @@ class PostsViewModel @Inject constructor(
     }
 
     private fun getPosts() = viewModelScope.launch {
-
         try {
             val responseUsers = getUsersUserCase()
             val responsePosts = getPostsUseCase()
             if (responseUsers.isSuccessful && responsePosts.isSuccessful) {
                 if (responsePosts.body() != null) {
+                    val posts = responsePosts.body()?.toUIModel(responseUsers.body()!!) ?: listOf()
                     _uiState.update {
                         it.copy(
-                            posts = responsePosts.body()?.toUIModel(responseUsers.body()!!),
+                            posts = posts,
                             loading = false
                         )
                     }
                 }
             } else {
                 _uiState.update {
-                    it.copy(posts = null, loading = false, error = "Something Went Wrong")
+                    it.copy(posts = listOf(), loading = false, error = "Something Went Wrong")
                 }
             }
 
         } catch (e: java.lang.Exception) {
             _uiState.update {
-                it.copy(posts = null, loading = false, error = e.localizedMessage)
+                it.copy(posts = listOf(), loading = false, error = e.localizedMessage)
             }
         }
 

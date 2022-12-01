@@ -6,9 +6,7 @@ import com.google.firebase.storage.ktx.storage
 
 object FirebaseResources {
     private val fbStorage = Firebase.storage("gs://peach-assessment.appspot.com")
-    fun getMedia(id: String): StorageReference {
-        return if(id.isNotEmpty()){
-            fbStorage.reference.child(id)
-        } else fbStorage.reference
+    fun getImageRef(id: String): StorageReference {
+        return fbStorage.reference.child(id)
     }
 }
