@@ -6,18 +6,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.mohamed.peaceandroidtask.R
 import com.mohamed.peaceandroidtask.entities.posts.UiPost
 import com.mohamed.peaceandroidtask.entities.posts.uiPosts
@@ -25,11 +34,13 @@ import com.mohamed.peaceandroidtask.utils.FirebaseResources
 
 @Composable
 fun PostListView(uiPosts: List<UiPost>, modifier: Modifier) {
-    LazyColumn(modifier = modifier){
-        items(uiPosts.size, itemContent = { item ->
-            if(uiPosts[item].mediaType == "photo"){
+    LazyColumn(modifier = modifier) {
+        items(count = uiPosts.size,key = {
+            uiPosts[it].id
+        }, itemContent = { item ->
+            if (uiPosts[item].mediaType == "photo") {
                 PhotoPostCard(uiPost = uiPosts[item])
-            }else
+            } else
                 VideoPostCard(uiPost = uiPosts[item])
         })
     }
@@ -104,7 +115,6 @@ fun PhotoPostCard(uiPost: UiPost) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun VideoPostCard(uiPost: UiPost) {
     Card(
@@ -147,6 +157,7 @@ fun VideoPostCard(uiPost: UiPost) {
                 }
 
             }
+            VideoView(uiPost.media)
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = uiPost.title,
@@ -166,8 +177,73 @@ fun VideoPostCard(uiPost: UiPost) {
     }
 }
 
+@Composable
+fun VideoView(videoId: String) {
+    val context = LocalContext.current
+    var videoUri by remember { mutableStateOf("") }
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+
+    LaunchedEffect(key1 = videoId) {
+        videoUri = FirebaseResources.getVideoUrl(videoId)
+    }
+
+    if (videoUri.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    }
+
+    if (videoUri.isNotEmpty()) {
+        val exoPlayer = ExoPlayer.Builder(LocalContext.current)
+            .build()
+            .also { exoPlayer ->
+                val mediaItem = MediaItem.Builder()
+                    .setUri(videoUri)
+                    .build()
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.prepare()
+                exoPlayer.playWhenReady = true
+            }
+
+        DisposableEffect(
+            AndroidView(
+                factory = {
+                    StyledPlayerView(context).apply {
+                        player = exoPlayer
+                    }
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+        ) {
+            val observer = LifecycleEventObserver { owner, event ->
+                when (event) {
+                    Lifecycle.Event.ON_PAUSE -> {
+                        exoPlayer.pause()
+                    }
+                    Lifecycle.Event.ON_RESUME -> {
+                        exoPlayer.play()
+                    }
+                    else -> {}
+                }
+            }
+            val lifecycle = lifecycleOwner.value.lifecycle
+            lifecycle.addObserver(observer)
+            onDispose {
+                exoPlayer.release()
+                lifecycle.removeObserver(observer)
+            }
+        }
+    }
+
+}
+
 @Preview
 @Composable
 fun PostsScreenPreview() {
-    PostListView(uiPosts,Modifier.fillMaxSize())
+    PostListView(uiPosts, Modifier.fillMaxSize())
 }
